@@ -1,156 +1,143 @@
-// Verificar si window.ethereum está disponible
-if (typeof window.ethereum !== 'undefined') {
-    console.log('MetaMask está instalado');
-} else {
-    alert('Por favor, instala MetaMask para usar esta aplicación!');
-}
+let provider;
+let signer;
+let contract;
 
-// Crear una instancia de web3 con window.ethereum
-const web3 = new Web3(window.ethereum);
+const contractAddress = "0x0354A964Bc3c8CA51ab519a4312Ca2C1f23380b3"; // Dirección de tu contrato
+const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"DividendsClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"GOOBurned","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Staked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Unstaked","type":"event"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burnGOO","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"burnRate","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"claimDividends","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"distributeDividends","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"distributionInterval","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"emergencyWithdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getNextDistributionTime","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getPrizePool","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getTotalGOOBurned","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getUserBNBDividends","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getUserGOODividends","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"lastDistributionTime","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"stakeBNB","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalBNBStaked","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalGOOBurned","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalPrizePool","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"unstakeBNB","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userBNBEarnings","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userGOO","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userGOOEarnings","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userLastClaimTime","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userStakedBNB","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"users","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"stateMutability":"payable","type":"receive"}];
 
-// Detalles del contrato
-const contractAddress = '0xe8583db6876f0F06B242BEC92AD7b8BaC05C5b8c';  // Reemplaza con la dirección de tu contrato
-const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"GOOClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Staked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Unstaked","type":"event"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"claimGOO","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getGOOBalance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getProducedGOO","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"gooPerBNB","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"stake","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"stakes","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"lastUpdated","type":"uint256"},{"internalType":"uint256","name":"gooProduced","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"unstake","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"withdrawGOO","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+async function connectMetaMask() {
+    if (typeof window.ethereum !== "undefined") {
+        try {
+            // Solicitar acceso a la cuenta de MetaMask
+            await window.ethereum.request({ method: "eth_requestAccounts" });
 
-// Conectar a MetaMask
-async function connectWallet() {
-    try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        console.log('Wallet conectada');
-        updateWalletInfo();
-    } catch (error) {
-        console.error('El usuario denegó el acceso a la cuenta');
+            // Crear proveedor y firmante de MetaMask
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+
+            // Conectar con el contrato inteligente
+            contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+            // Obtener la dirección de la cuenta de MetaMask
+            const userAddress = await signer.getAddress();
+            console.log(`Conectado con la cuenta: ${userAddress}`);
+
+            // Llamar a funciones del contrato, por ejemplo, obtener el prize pool
+            const prizePool = await contract.getPrizePool();
+            document.getElementById('prizePool').innerText = ethers.utils.formatEther(prizePool) + " BNB";
+
+            // Llamar a más funciones que necesites, como la producción de GOO, etc.
+            const gooProduction = await contract.getTotalGOOBurned();
+            document.getElementById('gooProduction').innerText = ethers.utils.formatUnits(gooProduction, 18) + " goo/s";
+
+            // También puedes actualizar otros elementos de la UI como el saldo de GOO y BNB
+            updateUserStats();
+
+        } catch (error) {
+            console.error("Error al conectar MetaMask:", error);
+            alert("Por favor, asegúrate de que MetaMask esté instalado y que has conectado tu cuenta.");
+        }
+    } else {
+        alert("MetaMask no está instalado. Por favor, instálalo para interactuar con el sitio.");
     }
 }
 
-// Actualizar la información de la wallet
-async function updateWalletInfo() {
-    const accounts = await web3.eth.getAccounts();
-    const balance = await web3.eth.getBalance(accounts[0]);
+// Llamar a la función de conexión al cargar la página
+window.onload = connectMetaMask;
 
-    document.getElementById('userGOO').innerText = await getGOOBalance(accounts[0]);
-    document.getElementById('stakedBNB').innerText = await getStakedBNB(accounts[0]);
-    document.getElementById('userShare').innerText = await getUserShare(accounts[0]);
-}
-
-// Obtener el balance de GOO del usuario
-async function getGOOBalance(account) {
-    const contract = new web3.eth.Contract(contractABI, contractAddress);
-    const balance = await contract.methods.balanceOf(account).call();
-    return web3.utils.fromWei(balance, 'ether');
-}
-
-// Obtener la cantidad de BNB apostado por el usuario
-async function getStakedBNB(account) {
-    const contract = new web3.eth.Contract(contractABI, contractAddress);
-    const stakedAmount = await contract.methods.stakedBalance(account).call();
-    return web3.utils.fromWei(stakedAmount, 'ether');
-}
-
-// Obtener la participación del usuario en el total del pool
-async function getUserShare(account) {
-    const contract = new web3.eth.Contract(contractABI, contractAddress);
-    const totalPool = await contract.methods.totalStaked().call();
-    const userStaked = await contract.methods.stakedBalance(account).call();
-    const share = (userStaked / totalPool) * 100;
-    return share.toFixed(2);
-}
-
-// Función para apostar BNB
+// Función para stakear BNB
 async function stakeBNB() {
-    const amount = document.getElementById('stakeAmount').value;
-    if (amount <= 0) {
-        alert('Por favor ingresa una cantidad válida para apostar');
+    const stakeAmount = document.getElementById('stakeAmount').value;
+    if (!stakeAmount || parseFloat(stakeAmount) <= 0) {
+        alert("Por favor, ingresa una cantidad válida de BNB.");
         return;
     }
 
-    const accounts = await web3.eth.getAccounts();
-    const contract = new web3.eth.Contract(contractABI, contractAddress);
-
-    // Convertir BNB a Wei (la unidad más pequeña de Ethereum y BSC)
-    const amountInWei = web3.utils.toWei(amount, 'ether');
-
-    try {
-        await contract.methods.stake(amountInWei).send({ from: accounts[0] });
-        alert('¡BNB apostado exitosamente!');
-        updateWalletInfo();
-    } catch (error) {
-        console.error('Error al apostar BNB', error);
-    }
+    const tx = await contract.stakeBNB({ value: ethers.utils.parseEther(stakeAmount) });
+    await tx.wait();
+    alert(`¡Staked ${stakeAmount} BNB con éxito!`);
+    updateUserStats();
 }
 
-// Función para desapostar BNB (desapostar el 50%)
+// Función para unstakear BNB
 async function unstakeBNB() {
-    const accounts = await web3.eth.getAccounts();
-    const contract = new web3.eth.Contract(contractABI, contractAddress);
-
-    try {
-        const stakedAmount = await contract.methods.stakedBalance(accounts[0]).call();
-        const unstakeAmount = stakedAmount / 2;
-
-        await contract.methods.unstake(web3.utils.toWei(unstakeAmount.toString(), 'ether')).send({ from: accounts[0] });
-        alert('¡El 50% de tu BNB ha sido desapostado!');
-        updateWalletInfo();
-    } catch (error) {
-        console.error('Error al desapostar BNB', error);
-    }
-}
-
-// Función para reclamar GOO
-async function claimGOO() {
-    const accounts = await web3.eth.getAccounts();
-    const contract = new web3.eth.Contract(contractABI, contractAddress);
-
-    try {
-        await contract.methods.claimGOO().send({ from: accounts[0] });
-        alert('¡GOO reclamado exitosamente!');
-        updateWalletInfo();
-    } catch (error) {
-        console.error('Error al reclamar GOO', error);
-    }
+    const tx = await contract.unstakeBNB();
+    await tx.wait();
+    alert("¡Unstaked el 50% de tus BNB con éxito!");
+    updateUserStats();
 }
 
 // Función para quemar GOO
 async function burnGOO() {
-    const amount = document.getElementById('burnAmount').value;
-    if (amount <= 0) {
-        alert('Por favor ingresa una cantidad válida para quemar');
+    const burnAmount = document.getElementById('burnAmount').value;
+    if (!burnAmount || parseInt(burnAmount) <= 0) {
+        alert("Por favor, ingresa una cantidad válida de GOO.");
         return;
     }
 
-    const accounts = await web3.eth.getAccounts();
-    const contract = new web3.eth.Contract(contractABI, contractAddress);
-
-    const amountInWei = web3.utils.toWei(amount, 'ether');
-
-    try {
-        await contract.methods.burn(amountInWei).send({ from: accounts[0] });
-        alert('¡GOO quemado exitosamente!');
-        updateWalletInfo();
-    } catch (error) {
-        console.error('Error al quemar GOO', error);
-    }
+    const tx = await contract.burnGOO(ethers.utils.parseUnits(burnAmount, 18));
+    await tx.wait();
+    alert(`¡Quemado ${burnAmount} GOO con éxito!`);
+    updateUserStats();
 }
 
 // Función para retirar BNB
 async function withdrawBNB() {
-    const accounts = await web3.eth.getAccounts();
-    const contract = new web3.eth.Contract(contractABI, contractAddress);
-
-    try {
-        await contract.methods.withdraw().send({ from: accounts[0] });
-        alert('¡BNB retirado exitosamente!');
-        updateWalletInfo();
-    } catch (error) {
-        console.error('Error al retirar BNB', error);
-    }
+    const tx = await contract.claimDividends();
+    await tx.wait();
+    alert("¡Retirado con éxito tu BNB de dividendos!");
+    updateUserStats();
 }
 
-// Inicializar la página y actualizar la información de la wallet al cargar
-window.onload = async function() {
-    if (window.ethereum) {
-        await connectWallet();
+// Función para actualizar las estadísticas del usuario
+async function updateUserStats() {
+    const userAddress = await signer.getAddress();
+
+    // Obtener estadísticas de staking
+    const userStakedBNB = await contract.userStakedBNB(userAddress);
+    document.getElementById('stakedBNB').innerText = ethers.utils.formatEther(userStakedBNB) + " BNB";
+
+    // Obtener estadísticas de GOO
+    const userGOO = await contract.userGOO(userAddress);
+    document.getElementById('userGOO').innerText = ethers.utils.formatUnits(userGOO, 18) + " goo";
+
+    // Obtener los dividendos acumulados
+    const userBNBEarnings = await contract.getUserBNBDividends(userAddress);
+    const userGOOEarnings = await contract.getUserGOODividends(userAddress);
+
+    document.getElementById('totalBNB').innerText = ethers.utils.formatEther(userBNBEarnings) + " BNB";
+
+    // Actualizar el progreso de las barras
+    const totalBNBStaked = await contract.totalBNBStaked();
+    const totalGOOBurned = await contract.totalGOOBurned();
+    const userShareBNB = (userStakedBNB / totalBNBStaked) * 100;
+    const userShareGOO = (userGOO / totalGOOBurned) * 100;
+
+    updateUserShare(userShareBNB);
+    updateBurnShare(userShareGOO);
+}
+
+// Actualizar las barras de progreso de usuario
+function updateUserShare(share) {
+    document.getElementById('userShare').textContent = share.toFixed(2) + '%';
+    document.getElementById('userShareProgress').style.width = share.toFixed(2) + '%';
+}
+
+function updateBurnShare(share) {
+    document.getElementById('burnShare').textContent = share.toFixed(2) + '%';
+    document.getElementById('burnShareProgress').style.width = share.toFixed(2) + '%';
+}
+
+// Actualización de la cuenta regresiva para la siguiente distribución
+setInterval(async () => {
+    const nextDistributionTime = await contract.getNextDistributionTime();
+    const countdownElement = document.getElementById('countdown');
+
+    if (nextDistributionTime > 0) {
+        const minutes = Math.floor(nextDistributionTime / 60);
+        const seconds = nextDistributionTime % 60;
+        countdownElement.innerText = `${minutes}m ${seconds}s`;
     } else {
-        alert('MetaMask es requerido para usar esta aplicación.');
+        countdownElement.innerText = "¡Distribución disponible!";
     }
-};
+}, 1000);
