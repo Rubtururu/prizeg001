@@ -204,41 +204,7 @@
         </div>
     </div>
 
-    <script>
-        // Placeholder functions for interaction
-        async function stakeBNB() {
-            const amount = document.getElementById('stakeAmount').value;
-            console.log('Staking BNB: ', amount);
-            // Add logic to call contract staking function
-        }
-
-        async function unstakeBNB() {
-            console.log('Unstaking 50% BNB...');
-            // Add logic to unstake 50% of the user's staked BNB
-        }
-
-        async function burnGOO() {
-            const amount = document.getElementById('burnAmount').value;
-            console.log('Burning GOO: ', amount);
-            // Add logic to call contract burning function
-        }
-
-        async function withdrawBNB() {
-            console.log('Withdrawing BNB...');
-            // Add logic to withdraw BNB from rewards
-        }
-
-        // Updating progress bars dynamically (example)
-        function updateUserShare(share) {
-            document.getElementById('userShare').textContent = share + '%';
-            document.getElementById('userShareProgress').style.width = share + '%';
-        }
-
-        function updateBurnShare(share) {
-            document.getElementById('burnShare').textContent = share + '%';
-            document.getElementById('burnShareProgress').style.width = share + '%';
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="game.js"></script>
 </body>
 </html>
