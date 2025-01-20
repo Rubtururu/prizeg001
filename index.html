@@ -205,6 +205,97 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script>
+        // Aquí puedes agregar las funciones de staking, quema y retiro de BNB/GOO.
+        let totalGOO = 0;
+        let stakedBNB = 0;
+        let totalBNB = 0;
+        let totalGOOBurned = 0;
+        let prizePool = 1000; // Solo un valor inicial de ejemplo
+
+        // Función para simular el staking de BNB
+        function stakeBNB() {
+            let stakeAmount = parseFloat(document.getElementById('stakeAmount').value);
+            if (stakeAmount > 0) {
+                stakedBNB += stakeAmount;
+                document.getElementById('stakedBNB').innerText = stakedBNB;
+                updateGameStats();
+                document.getElementById('status').innerText = 'BNB staked successfully!';
+            } else {
+                alert('Please enter a valid amount to stake!');
+            }
+        }
+
+        // Función para simular el unstaking de BNB
+        function unstakeBNB() {
+            let unstakeAmount = stakedBNB / 2; // Deshacer el 50% de lo apostado
+            stakedBNB -= unstakeAmount;
+            document.getElementById('stakedBNB').innerText = stakedBNB;
+            updateGameStats();
+            document.getElementById('status').innerText = '50% of your BNB unstaked!';
+        }
+
+        // Función para simular la quema de GOO
+        function burnGOO() {
+            let burnAmount = parseInt(document.getElementById('burnAmount').value);
+            if (burnAmount > 0) {
+                totalGOOBurned += burnAmount;
+                document.getElementById('totalGOOBurned').innerText = totalGOOBurned;
+                document.getElementById('burnStatus').innerText = 'GOO burned successfully!';
+                updateBurnStats();
+            } else {
+                alert('Please enter a valid amount to burn!');
+            }
+        }
+
+        // Función para simular el retiro de BNB
+        function withdrawBNB() {
+            let withdrawAmount = totalBNB; // Retirar todo lo ganado
+            totalBNB = 0;
+            document.getElementById('totalBNB').innerText = totalBNB;
+            document.getElementById('withdrawStatus').innerText = `You have withdrawn ${withdrawAmount} BNB!`;
+        }
+
+        // Actualizar las estadísticas del juego
+        function updateGameStats() {
+            totalGOO = stakedBNB * 10; // Ejemplo de producción de GOO
+            document.getElementById('gooProduction').innerText = totalGOO;
+            document.getElementById('userGOO').innerText = totalGOO;
+            let userShare = (stakedBNB / prizePool) * 100;
+            document.getElementById('userShare').innerText = userShare.toFixed(2);
+            document.getElementById('userShareProgress').style.width = `${userShare}%`;
+        }
+
+        // Actualizar las estadísticas de la quema de GOO
+        function updateBurnStats() {
+            let burnPrizePool = totalGOOBurned * 0.1; // Ejemplo: el 10% de GOO quemado se distribuye en el premio
+            document.getElementById('burnPrizePool').innerText = burnPrizePool.toFixed(2);
+            let burnShare = (totalGOOBurned / prizePool) * 100;
+            document.getElementById('burnShare').innerText = burnShare.toFixed(2);
+            document.getElementById('burnShareProgress').style.width = `${burnShare}%`;
+        }
+
+        // Simulador de cuenta regresiva para la distribución diaria
+        function startCountdown() {
+            let countdownTime = 60 * 60 * 24; // 24 horas en segundos
+            let interval = setInterval(function () {
+                let hours = Math.floor(countdownTime / 3600);
+                let minutes = Math.floor((countdownTime % 3600) / 60);
+                let seconds = countdownTime % 60;
+                document.getElementById('countdown').innerText = `${hours}:${minutes}:${seconds}`;
+                countdownTime--;
+
+                if (countdownTime < 0) {
+                    clearInterval(interval);
+                    document.getElementById('countdown').innerText = 'Time to collect rewards!';
+                }
+            }, 1000);
+        }
+
+        // Iniciar la cuenta regresiva al cargar la página
+        window.onload = startCountdown;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="game.js"></script>
 </body>
 </html>
