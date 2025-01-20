@@ -89,7 +89,7 @@
             height: 100%;
             background-color: #ffcc00;
             border-radius: 10px;
-            width: 0%;
+            width: 0%; /* This will be updated dynamically */
         }
         .btn {
             background: #ffcc00;
@@ -174,16 +174,37 @@
             <div class="progress-bar">
                 <div class="progress-bar-inner" id="userShareProgress"></div>
             </div>
-            <input type="number" id="stakeAmount" placeholder="Enter BNB to Stake" class="input-box">
+            <input type="number" id="stakeAmount" placeholder="Enter BNB amount" step="0.01" min="0.01" class="input-box">
             <button class="btn" onclick="stakeBNB()">Stake BNB</button>
-            <button class="btn" onclick="unstakeBNB()">Unstake BNB (50%)</button>
-            <button class="btn" onclick="claimGOO()">Claim GOO</button>
-            <input type="number" id="burnAmount" placeholder="Enter GOO to Burn" class="input-box">
+            <button class="btn" onclick="unstakeBNB()">Unstake 50%</button>
+            <p id="status">Stake BNB to start earning GOO!</p>
+        </div>
+
+        <!-- GOO Deposit Box -->
+        <div class="panel">
+            <h2>Deposit GOO to Burn for BNB</h2>
+            <input type="number" id="burnAmount" placeholder="Enter GOO amount to burn" step="1" min="1" class="input-box">
             <button class="btn" onclick="burnGOO()">Burn GOO</button>
+            <p id="burnStatus">Deposit GOO to receive BNB rewards!</p>
+            <div class="stats">Total GOO Burned Today: <span id="totalGOOBurned">0</span> goo</div>
+            <div class="stats">Game Prize Pool for Burned GOO: <span id="burnPrizePool">0</span> BNB</div>
+            <div class="stats countdown">Next Distribution in: <span id="countdown"></span></div>
+            <div class="stats">Your Share of Burned GOO: <span id="burnShare">0</span>%</div>
+            <div class="progress-bar">
+                <div class="progress-bar-inner" id="burnShareProgress"></div>
+            </div>
+        </div>
+
+        <!-- Withdraw Panel -->
+        <div class="withdraw-panel">
+            <h2>Withdraw Your BNB</h2>
+            <div class="stats">Total BNB Earned from Dividends: <span id="totalBNB">0</span> BNB</div>
             <button class="btn" onclick="withdrawBNB()">Withdraw BNB</button>
+            <p id="withdrawStatus">Withdraw your daily BNB rewards!</p>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="moonshots.js"></script>
 </body>
 </html>
-
-
