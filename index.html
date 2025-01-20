@@ -89,7 +89,7 @@
             height: 100%;
             background-color: #ffcc00;
             border-radius: 10px;
-            width: 0%; /* Esto se actualizará dinámicamente */
+            width: 0%; /* This will be updated dynamically */
         }
         .btn {
             background: #ffcc00;
@@ -145,67 +145,111 @@
             width: 100%;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
         }
-        .withdraw-panel input {
-            font-size: 20px;
+        .withdraw-panel .stats {
+            background-color: #333;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <h1 class="header">Moonshots Farm Clone</h1>
-    <div class="game-prize-pool" id="prizePool">Prize Pool: 0 BNB</div>
+    <div class="header">MOONSHOTS FARM</div>
+    
+    <!-- Game Prize Pool with neon border and shadow -->
+    <div class="game-prize-pool">
+        Prize Pool: <span id="prizePool">0</span> BNB
+    </div>
+
     <div class="panel-wrapper">
+        <!-- Stats Panel -->
         <div class="panel">
-            <h2>Staked BNB</h2>
-            <p class="stats" id="stakedBNB">0 BNB</p>
+            <h2>Game Stats</h2>
+            <div class="stats">Total GOO Production: <span id="gooProduction">0</span> goo/s</div>
+            <div class="stats">Your GOO Balance: <span id="userGOO">0</span> goo</div>
+            <div class="stats">Your Staked BNB: <span id="stakedBNB">0</span> BNB</div>
+            <div class="stats">BNB for Burning GOO: <span id="burnBNB">0</span> BNB</div>
+            <div class="stats">Your Share of Total Pool: <span id="userShare">0</span>%</div>
+            <div class="progress-bar">
+                <div class="progress-bar-inner" id="userShareProgress"></div>
+            </div>
+            <input type="number" id="stakeAmount" placeholder="Enter BNB amount" step="0.01" min="0.01" class="input-box">
             <button class="btn" onclick="stakeBNB()">Stake BNB</button>
-            <input type="number" id="stakeAmount" class="input-box" placeholder="Amount to stake">
+            <button class="btn" onclick="unstakeBNB()">Unstake 50%</button>
+            <p id="status">Stake BNB to start earning GOO!</p>
         </div>
+
+        <!-- GOO Deposit Box -->
         <div class="panel">
-            <h2>User GOO</h2>
-            <p class="stats" id="userGOO">0 goo</p>
+            <h2>Deposit GOO to Burn for BNB</h2>
+            <input type="number" id="burnAmount" placeholder="Enter GOO amount to burn" step="1" min="1" class="input-box">
             <button class="btn" onclick="burnGOO()">Burn GOO</button>
-            <input type="number" id="burnAmount" class="input-box" placeholder="Amount to burn">
-        </div>
-        <div class="panel withdraw-panel">
-            <h2>Total BNB Earnings</h2>
-            <p class="stats" id="totalBNB">0 BNB</p>
-            <button class="btn" onclick="withdrawBNB()">Withdraw BNB</button>
-        </div>
-    </div>
-    <div class="panel-wrapper">
-        <div class="panel">
-            <h2>Prize Pool</h2>
-            <p class="stats" id="prizePool">Prize Pool: 0 BNB</p>
-        </div>
-        <div class="panel">
-            <h2>Production of GOO</h2>
-            <p class="stats" id="gooProduction">0 goo/s</p>
-        </div>
-        <div class="panel">
-            <h2>Next Distribution</h2>
-            <p class="stats" id="countdown">Next distribution in...</p>
-        </div>
-    </div>
-    <div class="panel-wrapper">
-        <div class="panel">
-            <h2>Your Share</h2>
-            <p class="stats" id="userShare">0%</p>
+            <p id="burnStatus">Deposit GOO to receive BNB rewards!</p>
+            <div class="stats">Total GOO Burned Today: <span id="totalGOOBurned">0</span> goo</div>
+            <div class="stats">Game Prize Pool for Burned GOO: <span id="burnPrizePool">0</span> BNB</div>
+            <div class="stats countdown">Next Distribution in: <span id="countdown"></span></div>
+            <div class="stats">Your Share of Burned GOO: <span id="burnShare">0</span>%</div>
             <div class="progress-bar">
-                <div id="userShareProgress" class="progress-bar-inner" style="width: 0%;"></div>
+                <div class="progress-bar-inner" id="burnShareProgress"></div>
             </div>
         </div>
+
+        <!-- Dividend Pools -->
         <div class="panel">
-            <h2>Burn Share</h2>
-            <p class="stats" id="burnShare">0%</p>
-            <div class="progress-bar">
-                <div id="burnShareProgress" class="progress-bar-inner" style="width: 0%;"></div>
-            </div>
+            <h2>Dividend Pools</h2>
+            <div class="stats">1% of Game Prize Pool for Stakers: <span id="stakerPool">0</span> BNB</div>
+            <div class="stats">1% of Game Prize Pool for GOO Burners: <span id="burnerPool">0</span> BNB</div>
+            <div class="divider"></div>
+            <div class="stats">Total Daily BNB Distributed: <span id="dailyBNB">0</span> BNB</div>
         </div>
     </div>
 
-    <p id="status">Conéctate con MetaMask para comenzar.</p>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.2.umd.min.js"></script>
+    <script>
+        let prizePool = 1000;  // Example value
+        let gooProduction = 100;  // Example value
+        let userGOO = 500;  // Example value
+        let stakedBNB = 5;  // Example value
+        let burnBNB = 2;  // Example value
+        let totalGooBurned = 300;  // Example value
+        let stakerPool = 10;  // Example value for stakers' 1% pool
+        let burnerPool = 5;  // Example value for burners' 1% pool
+        let dailyBNB = stakerPool + burnerPool;  // Sum of BNB distributed
 
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
-    <script src="game.js"></script>
+        // Update the DOM with these values
+        document.getElementById("prizePool").innerText = prizePool;
+        document.getElementById("gooProduction").innerText = gooProduction;
+        document.getElementById("userGOO").innerText = userGOO;
+        document.getElementById("stakedBNB").innerText = stakedBNB;
+        document.getElementById("burnBNB").innerText = burnBNB;
+        document.getElementById("totalGOOBurned").innerText = totalGooBurned;
+        document.getElementById("burnPrizePool").innerText = burnBNB;
+        document.getElementById("stakerPool").innerText = stakerPool;
+        document.getElementById("burnerPool").innerText = burnerPool;
+        document.getElementById("dailyBNB").innerText = dailyBNB;
+
+        // Simulate a countdown
+        let countdownTime = 86400; // 24 hours in seconds
+        function updateCountdown() {
+            let hours = Math.floor(countdownTime / 3600);
+            let minutes = Math.floor((countdownTime % 3600) / 60);
+            let seconds = countdownTime % 60;
+            document.getElementById("countdown").innerText = `${hours}:${minutes}:${seconds}`;
+            if (countdownTime > 0) {
+                countdownTime--;
+                setTimeout(updateCountdown, 1000);
+            }
+        }
+        updateCountdown();
+
+        // Update the progress bar
+        function updateProgressBars() {
+            let totalShare = 100;  // Example total share percentage
+            document.getElementById("userShareProgress").style.width = `${totalShare}%`;
+            document.getElementById("burnShareProgress").style.width = `${totalShare}%`;
+        }
+        updateProgressBars();
+    </script>
 </body>
 </html>
