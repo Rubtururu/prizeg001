@@ -3,208 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moonshots Farm Clone</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+    <title>Moonshots Farm - Full Stats</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.0/dist/ethers.min.js"></script>
     <style>
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: #121212; 
-            color: #fff; 
-            text-align: center;
+        body {
+            font-family: Arial, sans-serif;
             padding: 20px;
-            margin: 0;
         }
-        .header {
-            font-size: 36px;
-            margin: 30px 0;
-            color: #ffcc00;
-            animation: fadeIn 2s ease-in-out;
-        }
-        .game-prize-pool {
-            font-size: 42px;
-            font-weight: bold;
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #1c1c1c;
-            border-radius: 10px;
-            border: 2px solid #ffcc00;
-            color: #ffcc00;
-            text-shadow: 0 0 5px #ffeb3b, 0 0 10px #ffcc00, 0 0 15px #ffcc00, 0 0 20px #ffcc00;
-            box-shadow: 0 0 10px #ffeb3b, 0 0 15px #ffcc00;
-            display: inline-block;
-            width: auto;
-            transition: box-shadow 0.3s ease;
-        }
-        .game-prize-pool:hover {
-            box-shadow: 0 0 20px #ffeb3b, 0 0 30px #ffcc00;
-        }
-        .panel-wrapper {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .panel {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 15px;
-            display: inline-block;
-            margin-bottom: 30px;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-            transition: 0.3s;
-        }
-        .panel:hover {
-            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.5);
-        }
-        .panel h2 {
-            font-size: 24px;
-            margin-bottom: 15px;
-            color: #ffcc00;
-        }
-        .stats {
-            font-size: 18px;
-            margin: 10px 0;
+        .button {
+            margin-top: 10px;
             padding: 10px;
-            background-color: #1c1c1c;
-            border-radius: 8px;
-            border: 1px solid #ffcc00;
-            display: inline-block;
-            width: 100%;
-        }
-        .stats span {
-            font-weight: bold;
-            color: #ffeb3b;
-        }
-        .progress-bar {
-            height: 20px;
-            background-color: #333;
-            border-radius: 10px;
-            margin: 5px 0;
-            width: 100%;
-        }
-        .progress-bar-inner {
-            height: 100%;
-            background-color: #ffcc00;
-            border-radius: 10px;
-            width: 0%; /* This will be updated dynamically */
-        }
-        .btn {
-            background: #ffcc00;
+            background-color: #4CAF50;
+            color: white;
             border: none;
-            padding: 14px 30px;
-            font-size: 20px;
             cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 6px #999;
-            transition: all 0.3s ease;
-            margin: 10px 0;
         }
-        .btn:hover {
-            background: #ffeb3b;
+        .button:hover {
+            background-color: #45a049;
         }
-        .btn:active {
-            box-shadow: 0 2px #666;
-            transform: translateY(2px);
-        }
-        .input-box {
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 2px solid #ffcc00;
-            font-size: 16px;
-            width: 220px;
-            background: #1c1c1c;
-            color: #fff;
-        }
-        .input-box:focus {
-            outline: none;
-            border-color: #ffeb3b;
-        }
-        .divider {
-            margin: 20px 0;
-            border-top: 2px solid #ffcc00;
-        }
-        .countdown {
-            font-size: 18px;
-            color: #ffeb3b;
-        }
-        .panel-wrapper {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .withdraw-panel {
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 15px;
-            padding: 25px;
-            max-width: 450px;
-            width: 100%;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-        }
-        .withdraw-panel .stats {
-            background-color: #333;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .info {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="header">MOONSHOTS FARM</div>
-    
-    <!-- Game Prize Pool with neon border and shadow -->
-    <div class="game-prize-pool">
-        Prize Pool: <span id="prizePool">0</span> BNB
+
+    <h1>Moonshots Farm - Full Stats</h1>
+    <button class="button" onclick="connectWallet()">Connect Wallet</button>
+
+    <div id="stats">
+        <h2>Account Info:</h2>
+        <p id="account">Not Connected</p>
+
+        <h2>Stats:</h2>
+        <p>Total BNB Staked: <span id="totalBNBStaked">0</span></p>
+        <p>Total GOO Burned: <span id="totalGOOBurned">0</span></p>
+        <p>Prize Pool: <span id="prizePool">0</span></p>
+        <p>Total BNB Dividends Distributed: <span id="totalBNBDividends">0</span></p>
+        <p>Total Burn Dividends Distributed: <span id="totalBurnDividends">0</span></p>
+        <p>Next Distribution Time: <span id="nextDistributionTime">0</span></p>
     </div>
 
-    <div class="panel-wrapper">
-        <!-- Stats Panel -->
-        <div class="panel">
-            <h2>Game Stats</h2>
-            <div class="stats">Total GOO Production: <span id="gooProduction">0</span> goo/s</div>
-            <div class="stats">Your GOO Balance: <span id="userGOO">0</span> goo</div>
-            <div class="stats">Your Staked BNB: <span id="stakedBNB">0</span> BNB</div>
-            <div class="stats">BNB for Burning GOO: <span id="burnBNB">0</span> BNB</div>
-            <div class="stats">Your Share of Total Pool: <span id="userShare">0</span>%</div>
-            <div class="progress-bar">
-                <div class="progress-bar-inner" id="userShareProgress"></div>
-            </div>
-            <input type="number" id="stakeAmount" placeholder="Enter BNB amount" step="0.01" min="0.01" class="input-box">
-            <button class="btn" onclick="stakeBNB()">Stake BNB</button>
-            <button class="btn" onclick="unstakeBNB()">Unstake 50%</button>
-            <p id="status">Stake BNB to start earning GOO!</p>
-        </div>
-
-        <!-- GOO Deposit Box -->
-        <div class="panel">
-            <h2>Deposit GOO to Burn for BNB</h2>
-            <input type="number" id="burnAmount" placeholder="Enter GOO amount to burn" step="1" min="1" class="input-box">
-            <button class="btn" onclick="burnGOO()">Burn GOO</button>
-            <p id="burnStatus">Deposit GOO to receive BNB rewards!</p>
-            <div class="stats">Total GOO Burned Today: <span id="totalGOOBurned">0</span> goo</div>
-            <div class="stats">Game Prize Pool for Burned GOO: <span id="burnPrizePool">0</span> BNB</div>
-            <div class="stats countdown">Next Distribution in: <span id="countdown"></span></div>
-            <div class="stats">Your Share of Burned GOO: <span id="burnShare">0</span>%</div>
-            <div class="progress-bar">
-                <div class="progress-bar-inner" id="burnShareProgress"></div>
-            </div>
-        </div>
-
-        <!-- Withdraw Panel -->
-        <div class="withdraw-panel">
-            <h2>Withdraw Your BNB</h2>
-            <div class="stats">Total BNB Earned from Dividends: <span id="totalBNB">0</span> BNB</div>
-            <button class="btn" onclick="withdrawBNB()">Withdraw BNB</button>
-            <p id="withdrawStatus">Withdraw your daily BNB rewards!</p>
-        </div>
+    <div id="staking">
+        <h2>Stake BNB</h2>
+        <input type="number" id="stakeAmount" placeholder="Amount in BNB">
+        <button class="button" onclick="stakeBNB()">Stake BNB</button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <div id="unstaking">
+        <h2>Unstake 50% BNB</h2>
+        <button class="button" onclick="unstakeBNB()">Unstake 50%</button>
+    </div>
+
+    <div id="burning">
+        <h2>Burn GOO</h2>
+        <input type="number" id="burnAmount" placeholder="Amount in GOO">
+        <button class="button" onclick="burnGOO()">Burn GOO</button>
+    </div>
+
+    <div id="claiming">
+        <h2>Claim Dividends</h2>
+        <button class="button" onclick="claimDividends()">Claim Dividends</button>
+    </div>
+
+    <div id="userStats">
+        <h2>Your Stats:</h2>
+        <p>Your Staked BNB: <span id="userStakedBNB">0</span></p>
+        <p>Your GOO Balance: <span id="userGOOBalance">0</span></p>
+        <p>Your GOO Earnings: <span id="userGOOEarnings">0</span></p>
+        <p>Your Total GOO Generated: <span id="userTotalGOOGenerated">0</span></p>
+        <p>Your Total GOO Burned: <span id="userTotalGOOBurned">0</span></p>
+        <p>Your BNBB Dividends: <span id="userBNBDividends">0</span></p>
+    </div>
+
     <script src="game.js"></script>
 </body>
 </html>
