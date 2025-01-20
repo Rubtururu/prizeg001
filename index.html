@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
     <style>
-        /* Aquí van todos los estilos CSS que proporcionaste antes */
         body { 
             font-family: 'Poppins', sans-serif; 
             background: #121212; 
@@ -90,7 +89,7 @@
             height: 100%;
             background-color: #ffcc00;
             border-radius: 10px;
-            width: 0%; /* This will be updated dynamically */
+            width: 0%; /* Esto se actualizará dinámicamente */
         }
         .btn {
             background: #ffcc00;
@@ -173,7 +172,37 @@
             <button class="btn" onclick="withdrawBNB()">Withdraw BNB</button>
         </div>
     </div>
-    <p id="countdown" class="countdown">Next distribution in...</p>
+    <div class="panel-wrapper">
+        <div class="panel">
+            <h2>Prize Pool</h2>
+            <p class="stats" id="prizePool">Prize Pool: 0 BNB</p>
+        </div>
+        <div class="panel">
+            <h2>Production of GOO</h2>
+            <p class="stats" id="gooProduction">0 goo/s</p>
+        </div>
+        <div class="panel">
+            <h2>Next Distribution</h2>
+            <p class="stats" id="countdown">Next distribution in...</p>
+        </div>
+    </div>
+    <div class="panel-wrapper">
+        <div class="panel">
+            <h2>Your Share</h2>
+            <p class="stats" id="userShare">0%</p>
+            <div class="progress-bar">
+                <div id="userShareProgress" class="progress-bar-inner" style="width: 0%;"></div>
+            </div>
+        </div>
+        <div class="panel">
+            <h2>Burn Share</h2>
+            <p class="stats" id="burnShare">0%</p>
+            <div class="progress-bar">
+                <div id="burnShareProgress" class="progress-bar-inner" style="width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+
     <p id="status">Conéctate con MetaMask para comenzar.</p>
 
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
